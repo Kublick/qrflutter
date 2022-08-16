@@ -5,7 +5,6 @@
 import 'dart:convert';
 
 ScanModel scanModelFromJson(String str) => ScanModel.fromJson(json.decode(str));
-
 String scanModelToJson(ScanModel data) => json.encode(data.toJson());
 
 class ScanModel {
