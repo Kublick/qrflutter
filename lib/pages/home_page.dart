@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qrsqlite/pages/direcciones_page.dart';
 import 'package:qrsqlite/pages/mapas_pages.dart';
+import 'package:qrsqlite/providers/db_provider.dart';
+import 'package:qrsqlite/providers/scan_list_provider.dart';
 import 'package:qrsqlite/providers/ui_provider.dart';
 import 'package:qrsqlite/widgets/custom_navigatorbar.dart';
 import 'package:qrsqlite/widgets/scan_button.dart';
@@ -11,12 +13,19 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scanListProvider =
+        Provider.of<ScanlistProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: const Text('Historial'),
         actions: [
-          IconButton(icon: const Icon(Icons.delete_forever), onPressed: () {})
+          IconButton(
+              icon: const Icon(Icons.delete_forever),
+              onPressed: () {
+                scanListProvider.borrarTodos();
+              })
         ],
       ),
       body: _HomePageBody(),
@@ -35,15 +44,25 @@ class _HomePageBody extends StatelessWidget {
 
     final currentIndex = uiProvider.selectedMenuOpt;
 
+    final tempScan = ScanModel(valor: 'http://incrementa.com');
+    // final intTemp = DBProvider.db.nuevoScan(tempScan);
+    // DBProvider.db.getScanById(1).then((scan) => print(scan));
+    DBProvider.db.getAllScan().then(print);
+
+    final scanListProvider =
+        Provider.of<ScanlistProvider>(context, listen: false);
+
     switch (currentIndex) {
       case 0:
-        return MapasPage();
+        scanListProvider.cargarScansPorTipo('geo');
+        return const MapasPage();
 
       case 1:
-        return DireccionesPage();
+        scanListProvider.cargarScansPorTipo('http');
+        return const DireccionesPage();
 
       default:
-        return MapasPage();
+        return const MapasPage();
     }
   }
 }
